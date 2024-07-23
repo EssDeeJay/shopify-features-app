@@ -112,7 +112,7 @@ export default function Index() {
 
   return (
     <Page>
-      <TitleBar title="Remix app template">
+      <TitleBar title="Features Test">
         <button variant="primary" onClick={generateProduct}>
           Generate a product
         </button>
@@ -124,31 +124,10 @@ export default function Index() {
               <BlockStack gap="500">
                 <BlockStack gap="200">
                   <Text as="h2" variant="headingMd">
-                    Congrats on creating a new Shopify app 🎉
+                    Welcome to our new Shopify app 🎉
                   </Text>
                   <Text variant="bodyMd" as="p">
-                    This embedded app template uses{" "}
-                    <Link
-                      url="https://shopify.dev/docs/apps/tools/app-bridge"
-                      target="_blank"
-                      removeUnderline
-                    >
-                      App Bridge
-                    </Link>{" "}
-                    interface examples like an{" "}
-                    <Link url="/app/additional" removeUnderline>
-                      additional page in the app nav
-                    </Link>
-                    , as well as an{" "}
-                    <Link
-                      url="https://shopify.dev/docs/api/admin-graphql"
-                      target="_blank"
-                      removeUnderline
-                    >
-                      Admin GraphQL
-                    </Link>{" "}
-                    mutation demo, to provide a starting point for app
-                    development.
+                    We will be creating a hell of features using this app and test it, so that we will have more practice creating the app and we can create the production grade applications soon.
                   </Text>
                 </BlockStack>
                 <BlockStack gap="200">
@@ -156,8 +135,7 @@ export default function Index() {
                     Get started with products
                   </Text>
                   <Text as="p" variant="bodyMd">
-                    Generate a product with GraphQL and get the JSON output for
-                    that product. Learn more about the{" "}
+                   Below is the base example of creating a product mutation through GraphQL, we will use it for reference to create the best of the operations.{" "}
                     <Link
                       url="https://shopify.dev/docs/api/admin-graphql/latest/mutations/productCreate"
                       target="_blank"
@@ -165,7 +143,7 @@ export default function Index() {
                     >
                       productCreate
                     </Link>{" "}
-                    mutation in our API references.
+                    mutation in Shopify API references.
                   </Text>
                 </BlockStack>
                 <InlineStack gap="300">
@@ -291,36 +269,28 @@ export default function Index() {
                         GraphQL API
                       </Link>
                     </InlineStack>
+                    <InlineStack align="space-between">
+                       <Text as="span" variant="bodyMd">
+                         Coding Editor
+                       </Text>
+                       <Link url="https://idx.google.com/" target="_blank" removeUnderline>
+                        Google Project IDX
+                       </Link>
+                    </InlineStack>
                   </BlockStack>
                 </BlockStack>
               </Card>
               <Card>
                 <BlockStack gap="200">
                   <Text as="h2" variant="headingMd">
-                    Next steps
+                    Completed Working
                   </Text>
                   <List>
                     <List.Item>
-                      Build an{" "}
-                      <Link
-                        url="https://shopify.dev/docs/apps/getting-started/build-app-example"
-                        target="_blank"
-                        removeUnderline
-                      >
-                        {" "}
-                        example app
-                      </Link>{" "}
-                      to get started
+                      Product Tags Add in Bulk
                     </List.Item>
                     <List.Item>
-                      Explore Shopify’s API with{" "}
-                      <Link
-                        url="https://shopify.dev/docs/apps/tools/graphiql-admin-api"
-                        target="_blank"
-                        removeUnderline
-                      >
-                        GraphiQL
-                      </Link>
+                      Remove Product tags mutation and functionality ?
                     </List.Item>
                   </List>
                 </BlockStack>

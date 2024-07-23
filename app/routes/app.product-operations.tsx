@@ -2,8 +2,6 @@ import {
   Box,
   Card,
   Layout,
-  Link,
-  List,
   Page,
   Text,
   BlockStack,
@@ -14,10 +12,12 @@ import {
   Tag,
   TextField
 } from "@shopify/polaris";
-import { TitleBar } from "@shopify/app-bridge-react";
 import { authenticate } from "~/shopify.server";
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { useState } from "react";
+import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
+import { useState, useCallback } from "react";
+import { useFetcher } from "@remix-run/react";
+import { useAppBridge, Modal, TitleBar } from "@shopify/app-bridge-react";
+import { json } from "@remix-run/node";
 
 
 export const loader = async ({request} : LoaderFunctionArgs) => {
@@ -25,9 +25,52 @@ export const loader = async ({request} : LoaderFunctionArgs) => {
   return null;
 }
 
-export default function AdditionalPage() {
+export const action = async({request}: ActionFunctionArgs) => {
+  const {admin} = await authenticate.admin(request);
+
+  const formData = await request.formData();
+  const tags = formData.get("tags");
+  const products = formData.get("products");
+
+  products && (products as string).split(",").forEach(async (product: string) => {
+    // here we will write the graphql mutation to add the product tags for each product and once it completes the operation we will throw the success response.
+    const tagsAddMutation = await admin.graphql(
+      `#graphql
+      mutation shopifyTagsAdd($id: ID!, $tags: [String!]!) {
+        tagsAdd(id: $id, tags: $tags) {
+          node{
+            id
+          }
+          userErrors {
+            message
+          }
+        }
+      }`,
+    {
+      variables: {
+          id: product,
+          tags: tags,
+      },
+    },
+    );
+
+    const tagsAddMutationJson = await tagsAddMutation.json();
+    console.log(tagsAddMutationJson);
+
+    // we will return the data here that we need to display to the users at the front end.
+  })
+
+  return json({
+    data: tags
+  })
+}
+
+export default function ProductFeatures() {
   const [products, setProducts] = useState<any[]>([]);
   const [selectedProducts, setSelectedProducts] = useState<any[]>([]);
+  const [tagValue, setTagValue] = useState<string>('');
+  const fetcher = useFetcher<typeof action>();
+  const shopify = useAppBridge();
 
   const handleProductSelection = (selectedProducts: any[]) => {
     setSelectedProducts(selectedProducts);
@@ -69,6 +112,10 @@ export default function AdditionalPage() {
     setSelectedProducts([]);
   }
 
+  const showTagModal = () => {
+    shopify.modal.show("product-tags-modal");
+  }
+
   const bulkActions = [
     {
       content: "Remove Selected",
@@ -79,13 +126,26 @@ export default function AdditionalPage() {
 
   const promotedActions = [
     {
-      content: 'Add Product Tags'
-    },
-    {
-      content: 'Remove Product Tags',
-      destructive: true
+      content: 'Add Product Tags',
+      onAction: showTagModal
     }
   ]
+
+  const addTags = () => {
+    fetcher.submit({products: selectedProducts, tags: [tagValue] }, { method: "POST" })
+    setTagValue('');
+    setSelectedProducts([]);
+    shopify.modal.hide("product-tags-modal");
+    shopify.toast.show("Product Tags added successfully");
+  };
+
+  const handleTextFieldChange = useCallback(
+    (value: string) => {
+      setTagValue(value);
+    },
+    []
+  );
+
 
   return (
     <Page>
@@ -133,20 +193,17 @@ export default function AdditionalPage() {
           </Card>
         </Layout.Section>
 
-        <ui-modal id="product-tags-modal">
+        <Modal id="product-tags-modal">
              <div>
-                <Box padding="400">
-                  <Text as="h2" variant="headingMd">
-                    Product Tags
-                  </Text>
-                  <TextField label="Enter Tag Name" name="tags" autoComplete="off" helpText="Enter tags that you wanted to add to the selected products" /> 
+                <Box padding="400">                
+                    <TextField label="Enter Tag Name" name="tags" autoComplete="off" helpText="Enter tags that you wanted to add to the selected products" id="tags-field" onChange={handleTextFieldChange} value={tagValue} placeholder="Enter Tag Names followed by comma" />          
                 </Box>
              </div>
-             <ui-title-bar title="Add Product Tags">
-               <button variant="primary">Add Tags</button>
-               <button onClick={() => document?.getElementById("product-tags-modal").hide()}>Cancel</button>
-             </ui-title-bar>
-        </ui-modal>
+             <TitleBar title="Add Product Tags">
+               <button variant="primary" onClick={addTags}>Add Tags</button>
+               <button onClick={() => shopify.modal.hide("product-tags-modal")}>Cancel</button>
+             </TitleBar>
+        </Modal>
       </Layout>
     </Page>
   );
