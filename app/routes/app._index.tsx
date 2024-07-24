@@ -112,7 +112,7 @@ export default function Index() {
 
   return (
     <Page>
-      <TitleBar title="Features Test">
+      <TitleBar title="Red Ruby">
         <button variant="primary" onClick={generateProduct}>
           Generate a product
         </button>
@@ -124,7 +124,7 @@ export default function Index() {
               <BlockStack gap="500">
                 <BlockStack gap="200">
                   <Text as="h2" variant="headingMd">
-                    Welcome to our new Shopify app 🎉
+                    Welcome to our new Shopify app develpped by The SJ Development. 🎉
                   </Text>
                   <Text variant="bodyMd" as="p">
                     We will be creating a hell of features using this app and test it, so that we will have more practice creating the app and we can create the production grade applications soon.
@@ -290,7 +290,13 @@ export default function Index() {
                       Product Tags Add in Bulk
                     </List.Item>
                     <List.Item>
-                      Remove Product tags mutation and functionality ?
+                      Remove Product tags in Bulk
+                    </List.Item>
+                    <List.Item>
+                      Remove Product tags by selecting the product
+                    </List.Item>
+                    <List.Item>
+                       ** Next ** - Instantly Updated UI 
                     </List.Item>
                   </List>
                 </BlockStack>

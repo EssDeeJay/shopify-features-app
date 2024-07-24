@@ -9,12 +9,13 @@ generator client {
 // enough when changing adapters.
 // See https://www.prisma.io/docs/orm/reference/prisma-schema-reference#string for more information
 datasource db {
-  provider = "sqlite"
-  url      = "file:dev.sqlite"
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
 }
 
 model Session {
-  id            String    @id
+  session_id  String    @id @default(auto()) @map("_id") @db.ObjectId
+  id          String    @unique
   shop          String
   state         String
   isOnline      Boolean   @default(false)
@@ -29,4 +30,17 @@ model Session {
   locale        String?
   collaborator  Boolean?  @default(false)
   emailVerified Boolean?  @default(false)
+}
+
+model Product {
+  id                  String             @id @default(auto()) @map("_id") @db.ObjectId
+  title               String?
+  tags                String[]
+  imageUrl            String?
+  shop                String?
+}
+
+model ProductOperations {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  shop        String?
 }

@@ -31,9 +31,10 @@ export const action = async({request}: ActionFunctionArgs) => {
   const formData = await request.formData();
   const tags = formData.get("tags");
   const products = formData.get("products");
+  const removeProducts = formData.get("removeTagProducts");
+  const tagsRemove = formData.get("tagsRemove");
 
-  products && (products as string).split(",").forEach(async (product: string) => {
-    // here we will write the graphql mutation to add the product tags for each product and once it completes the operation we will throw the success response.
+  products && (products as string).split(",").forEach(async (product: string) => { 
     const tagsAddMutation = await admin.graphql(
       `#graphql
       mutation shopifyTagsAdd($id: ID!, $tags: [String!]!) {
@@ -49,19 +50,44 @@ export const action = async({request}: ActionFunctionArgs) => {
     {
       variables: {
           id: product,
-          tags: tags,
+          tags: (tags as string).split(","),
       },
     },
     );
 
     const tagsAddMutationJson = await tagsAddMutation.json();
-    console.log(tagsAddMutationJson);
+    return tagsAddMutationJson;
+  });
+  
+  removeProducts && (removeProducts as string).split(",").forEach(async (removeProduct: string) => {
 
-    // we will return the data here that we need to display to the users at the front end.
+    const tagsRemoveMutation = await admin.graphql(
+      `#graphql
+      mutation shopifyTagsRemove($id: ID!, $tags: [String!]!) {
+        tagsRemove(id: $id, tags: $tags) {
+          node{
+            id
+          }
+          userErrors {
+            message
+          }
+        }
+      }`,
+    {
+      variables: {
+          id: removeProduct,
+          tags: (tagsRemove as string).split(","),
+      }
+    }
+    );
+
+    const tagsRemoveMutationJson = await tagsRemoveMutation.json();
+    return tagsRemoveMutationJson;
   })
 
   return json({
-    data: tags
+     tagsAdd: tags ? tags : null,
+     tagsRemove: tagsRemove ? tagsRemove : null
   })
 }
 
@@ -69,6 +95,7 @@ export default function ProductFeatures() {
   const [products, setProducts] = useState<any[]>([]);
   const [selectedProducts, setSelectedProducts] = useState<any[]>([]);
   const [tagValue, setTagValue] = useState<string>('');
+  const [tagRemoveValue, setTagRemoveValue] = useState<string>('');
   const fetcher = useFetcher<typeof action>();
   const shopify = useAppBridge();
 
@@ -112,10 +139,6 @@ export default function ProductFeatures() {
     setSelectedProducts([]);
   }
 
-  const showTagModal = () => {
-    shopify.modal.show("product-tags-modal");
-  }
-
   const bulkActions = [
     {
       content: "Remove Selected",
@@ -126,18 +149,35 @@ export default function ProductFeatures() {
 
   const promotedActions = [
     {
+      content: 'Create Product Bundle',
+      onAction: () => alert("Create Product Bundle")
+    },
+    {
       content: 'Add Product Tags',
-      onAction: showTagModal
-    }
+      onAction: () => shopify.modal.show("product-add-modal")
+    },
+    {
+      content: 'Remove Product Tags',
+      destructive: true,
+      onAction: () => shopify.modal.show("product-remove-modal")
+    },
   ]
 
   const addTags = () => {
     fetcher.submit({products: selectedProducts, tags: [tagValue] }, { method: "POST" })
     setTagValue('');
     setSelectedProducts([]);
-    shopify.modal.hide("product-tags-modal");
-    shopify.toast.show("Product Tags added successfully");
+    shopify.modal.hide("product-add-modal");
+    shopify.toast.show("Tags Added Successfully");
   };
+
+  const removeTags = () => {
+    fetcher.submit({ removeTagProducts: selectedProducts, tagsRemove: [tagRemoveValue] }, { method: "POST"});
+    setTagRemoveValue('');
+    setSelectedProducts([]);
+    shopify.modal.hide("product-remove-modal");
+    shopify.toast.show("Tags Removed Successfully");
+  }
 
   const handleTextFieldChange = useCallback(
     (value: string) => {
@@ -145,6 +185,18 @@ export default function ProductFeatures() {
     },
     []
   );
+
+  const handleRemoveFieldChange = useCallback(
+    (value: string) => {
+      setTagRemoveValue(value);
+    },
+    []
+  );
+
+  const handleSeparateRemove = async (id: string, tag: string) => {
+     fetcher.submit({ removeTagProducts: [id], tagsRemove: [tag]}, {method: "POST"});
+     shopify.toast.show(`${tag} Tag Removed Successfully, It will be gone when window reloads`);
+  }
 
 
   return (
@@ -171,14 +223,14 @@ export default function ProductFeatures() {
                         )
                        }
                        verticalAlignment="center"
-                       onClick={() => { console.log('resource product selected with the id of', id)}}
+                       onClick={() => {}}
                     >
                       <Text variant="bodyMd" fontWeight="semibold" as="h3">
                         {title}
                       </Text>
                       <InlineStack gap="200" blockAlign="center">
-                        {tags.map((tag: String) => (
-                          <Tag key={`${tag}`}>{tag}</Tag>
+                        {tags.map((tag: string) => (
+                          <Tag key={`${tag}`} onRemove={() => handleSeparateRemove(id, tag)}>{tag}</Tag>
                         ))}
                       </InlineStack>
                     </ResourceItem>
@@ -193,7 +245,7 @@ export default function ProductFeatures() {
           </Card>
         </Layout.Section>
 
-        <Modal id="product-tags-modal">
+        <Modal id="product-add-modal">
              <div>
                 <Box padding="400">                
                     <TextField label="Enter Tag Name" name="tags" autoComplete="off" helpText="Enter tags that you wanted to add to the selected products" id="tags-field" onChange={handleTextFieldChange} value={tagValue} placeholder="Enter Tag Names followed by comma" />          
@@ -201,8 +253,20 @@ export default function ProductFeatures() {
              </div>
              <TitleBar title="Add Product Tags">
                <button variant="primary" onClick={addTags}>Add Tags</button>
-               <button onClick={() => shopify.modal.hide("product-tags-modal")}>Cancel</button>
+               <button onClick={() => shopify.modal.hide("product-add-modal")}>Cancel</button>
              </TitleBar>
+        </Modal>
+
+        <Modal id="product-remove-modal">
+           <div>
+              <Box padding="400">
+                <TextField label="Enter Tag Name" name="tagsRemove" autoComplete="off" helpText="Enter tags that you want to remove from the selected products.Only the tags that match on the products gets removed, other tags will be ignored." id="tags-remove" placeholder="Enter Tag Names followed by comma" value={tagRemoveValue}  onChange={handleRemoveFieldChange} />
+              </Box>
+           </div>
+           <TitleBar title="Remove Product Tags">
+               <button variant="primary" onClick={removeTags}>Remove Tags</button>
+               <button onClick={() => shopify.modal.hide("product-remove-modal")}>Cancel</button>
+           </TitleBar>
         </Modal>
       </Layout>
     </Page>

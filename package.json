@@ -1,5 +1,5 @@
 {
-  "name": "features-test",
+  "name": "red-ruby",
   "private": true,
   "scripts": {
     "build": "remix vite:build",
@@ -11,12 +11,13 @@
     "env": "shopify app env",
     "start": "remix-serve ./build/server/index.js",
     "docker-start": "npm run setup && npm run start",
-    "setup": "prisma generate && prisma migrate deploy",
+    "setup": "prisma generate && prisma deploy",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "shopify": "shopify",
     "prisma": "prisma",
     "graphql-codegen": "graphql-codegen",
-    "vite": "vite"
+    "vite": "vite",
+    "predev": "prisma generate && prisma db push"
   },
   "type": "module",
   "engines": {
@@ -33,6 +34,7 @@
     "@shopify/shopify-app-remix": "^3.0.2",
     "@shopify/shopify-app-session-storage-prisma": "^5.0.2",
     "isbot": "^5.1.0",
+    "mongodb": "^6.8.0",
     "prisma": "^5.11.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
