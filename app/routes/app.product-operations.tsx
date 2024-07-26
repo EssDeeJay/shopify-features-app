@@ -18,16 +18,34 @@ import { useState, useCallback } from "react";
 import { useFetcher } from "@remix-run/react";
 import { useAppBridge, Modal, TitleBar } from "@shopify/app-bridge-react";
 import { json } from "@remix-run/node";
+import { getShopSession } from "~/models/ProductOperations.server";
 
 
 export const loader = async ({request} : LoaderFunctionArgs) => {
-  await authenticate.admin(request);
+  const {admin} = await authenticate.admin(request);
+  const shopQuery = await admin.graphql(
+    `#graphql
+    query {
+      shop {
+        name
+        url
+      }
+    } `
+  );
+  const shopName = await shopQuery.json();
+  const shop = shopName.data.shop.url.split("/")[2];
+  
+  const session = await getShopSession(shop);
+
+  /*
+   1. Get the products that was selected before by the user, if they have deleted it render empty markup
+   2. If products exist, return them as json and render them on the app page
+  */
   return null;
 }
 
 export const action = async({request}: ActionFunctionArgs) => {
   const {admin} = await authenticate.admin(request);
-
   const formData = await request.formData();
   const tags = formData.get("tags");
   const products = formData.get("products");
@@ -137,6 +155,7 @@ export default function ProductFeatures() {
     });
     setProducts(newProducts);
     setSelectedProducts([]);
+    // update the database, remove the products from the database
   }
 
   const bulkActions = [

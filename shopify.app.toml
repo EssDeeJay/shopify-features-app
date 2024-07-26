@@ -3,7 +3,7 @@
 client_id = "0c30902be418ed97b8d59668a3ba2e7a"
 name = "Red Ruby"
 handle = "red-ruby"
-application_url = "https://were-wifi-acquired-police.trycloudflare.com"
+application_url = "https://departments-conversation-hwy-saturday.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_checkout_branding_settings,read_checkouts,read_discounts,read_ord
 
 [auth]
 redirect_urls = [
-  "https://were-wifi-acquired-police.trycloudflare.com/auth/callback",
-  "https://were-wifi-acquired-police.trycloudflare.com/auth/shopify/callback",
-  "https://were-wifi-acquired-police.trycloudflare.com/api/auth/callback"
+  "https://departments-conversation-hwy-saturday.trycloudflare.com/auth/callback",
+  "https://departments-conversation-hwy-saturday.trycloudflare.com/auth/shopify/callback",
+  "https://departments-conversation-hwy-saturday.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
