@@ -42,7 +42,7 @@ model Product {
 
 model ProductOperations {
   session_id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  id                  String    @unique
+  operation           String   
   shop                String?
   products            String[]
 }

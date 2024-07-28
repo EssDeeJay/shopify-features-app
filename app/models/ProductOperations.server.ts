@@ -30,7 +30,26 @@ export async function getShopSession(shop: string){
    return null;
 }
 
-export const createProductOperations = async (products: any[]) => {
+export const getProductOperations = async (shop: string) => {
+   const operations = await prisma.productOperations.findMany({
+      where: {
+         shop: shop
+      }
+   });
+   return operations;
+}
+
+export const createProductOperations = async (products: any[], operationName: string, shop: string) => {
+   // we will pass on the products array and save it in the database in mongodb.
+   const createRecord = await prisma.productOperations.create({
+      data: {
+         products: products,
+         operation: operationName,
+         shop: shop
+      }
+   });
+   console.log('record created in mongodb, please check');
+   return createRecord;
 
 }
 

@@ -15,10 +15,10 @@ import {
 import { authenticate } from "~/shopify.server";
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
 import { useState, useCallback } from "react";
-import { useFetcher } from "@remix-run/react";
+import { useFetcher, useLoaderData } from "@remix-run/react";
 import { useAppBridge, Modal, TitleBar } from "@shopify/app-bridge-react";
 import { json } from "@remix-run/node";
-import { getShopSession } from "~/models/ProductOperations.server";
+import { getShopSession, createProductOperations, getProductOperations } from "~/models/ProductOperations.server";
 
 
 export const loader = async ({request} : LoaderFunctionArgs) => {
@@ -36,12 +36,16 @@ export const loader = async ({request} : LoaderFunctionArgs) => {
   const shop = shopName.data.shop.url.split("/")[2];
   
   const session = await getShopSession(shop);
+  if(!session) return null;
 
-  /*
-   1. Get the products that was selected before by the user, if they have deleted it render empty markup
-   2. If products exist, return them as json and render them on the app page
-  */
-  return null;
+   const products = await getProductOperations(shop);
+   if(!products) return null;
+  
+  return json({
+    shop: shop,
+    session: session,
+    dbProducts: products
+  });
 }
 
 export const action = async({request}: ActionFunctionArgs) => {
@@ -76,6 +80,8 @@ export const action = async({request}: ActionFunctionArgs) => {
     const tagsAddMutationJson = await tagsAddMutation.json();
     return tagsAddMutationJson;
   });
+
+  products && await createProductOperations((products as string).split(","), "Add Tags", "red-ruby");
   
   removeProducts && (removeProducts as string).split(",").forEach(async (removeProduct: string) => {
 
@@ -110,12 +116,16 @@ export const action = async({request}: ActionFunctionArgs) => {
 }
 
 export default function ProductFeatures() {
+  
   const [products, setProducts] = useState<any[]>([]);
   const [selectedProducts, setSelectedProducts] = useState<any[]>([]);
   const [tagValue, setTagValue] = useState<string>('');
   const [tagRemoveValue, setTagRemoveValue] = useState<string>('');
   const fetcher = useFetcher<typeof action>();
   const shopify = useAppBridge();
+  const loader = useLoaderData();
+
+  console.log(loader);
 
   const handleProductSelection = (selectedProducts: any[]) => {
     setSelectedProducts(selectedProducts);

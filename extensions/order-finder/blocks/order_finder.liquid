@@ -1,16 +1,8 @@
-{%comment%}
-{% assign avg_rating = block.settings.product.metafields.demo.avg_rating.value | round %}
-<span style="color:{{ block.settings.colour }}">
-  {% render 'stars', rating: avg_rating %}
-</span>
-{% if avg_rating >= 4 %}
-  <br>
-  <img src="{{ "thumbs-up.png" | asset_img_url: '15x' }}" height="15" width="15" loading="lazy">
-  {{ 'ratings.home.recommendationText' | t }}
-{% endif %}
-{%endcomment%}
+<link rel="stylesheet" href="{{ 'drawer.css' |  asset_url }}" media="print" onload="this.media='all'"></link>
 
-<div style="position: fixed; bottom: 10px; right: 10px; z-index: 10000; background-color: #82bc00; padding: 10px;">
+<script src="{{ 'drawer.js' | asset_url }}" defer="defer' }}"></script>
+
+<div style="position: fixed; bottom: 10px; right: 10px; z-index: 100; background-color: #82bc00; padding: 10px;">
   Where is my order !
 </div>
 
@@ -23,4 +15,3 @@
   ]
 }
 {% endschema %}
-
