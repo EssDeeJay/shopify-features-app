@@ -2,9 +2,11 @@
 
 <script src="{{ 'drawer.js' | asset_url }}" defer="defer' }}"></script>
 
-<div style="position: fixed; bottom: 10px; right: 10px; z-index: 100; background-color: #82bc00; padding: 10px;">
-  Where is my order !
+<div id="drawer-button">
+  <button id="openDrawer">Start the Party 🎉</button>
 </div>
+
+{% render 'drawer' %}
 
 {% schema %}
 {
