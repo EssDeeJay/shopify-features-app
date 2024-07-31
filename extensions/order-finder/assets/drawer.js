@@ -22,6 +22,9 @@ class sideDrawer extends HTMLElement {
           transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
           z-index: 1001;
           outline: none;
+          display: flex;
+          flex-direction: column;
+          overflow: auto;
         }
 
         .left {
@@ -29,6 +32,7 @@ class sideDrawer extends HTMLElement {
           left: -500px;
           height: 100%;
           width: 500px;
+          border-radius: 0 16px 16px 0;
         }
 
         .left.open {
@@ -36,14 +40,15 @@ class sideDrawer extends HTMLElement {
         }
 
         .bottom {
-          bottom: -500px;
-          height: 500px;
+          bottom: -700px;
+          height: 700px;
           width: 100%;
           left: 0;
+          border-radius: 16px 16px 0 0;
         }
 
         .bottom.open {
-          transform: translateY(-500px);
+          transform: translateY(-700px);
         }
 
         .drawer-js-overlay {

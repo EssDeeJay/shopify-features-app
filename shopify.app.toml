@@ -3,7 +3,7 @@
 client_id = "0c30902be418ed97b8d59668a3ba2e7a"
 name = "Red Ruby"
 handle = "red-ruby"
-application_url = "https://comes-brother-ghana-specialists.trycloudflare.com"
+application_url = "https://thumbnails-ri-releases-interference.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_checkout_branding_settings,read_checkouts,read_discounts,read_ord
 
 [auth]
 redirect_urls = [
-  "https://comes-brother-ghana-specialists.trycloudflare.com/auth/callback",
-  "https://comes-brother-ghana-specialists.trycloudflare.com/auth/shopify/callback",
-  "https://comes-brother-ghana-specialists.trycloudflare.com/api/auth/callback"
+  "https://thumbnails-ri-releases-interference.trycloudflare.com/auth/callback",
+  "https://thumbnails-ri-releases-interference.trycloudflare.com/auth/shopify/callback",
+  "https://thumbnails-ri-releases-interference.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
