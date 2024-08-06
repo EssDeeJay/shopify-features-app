@@ -2,6 +2,8 @@ class sideDrawer extends HTMLElement {
     constructor(){
         super();
         this.attachShadow({mode: 'open'});
+        this.form = this.querySelector('#drawerForm');
+        this.form.addEventListener('submit', this._handleSubmit.bind(this));
 
         this.shadowRoot.innerHTML = `
         <style>
@@ -128,6 +130,36 @@ class sideDrawer extends HTMLElement {
     setTimeout(() => {
       this.style.display = 'none';
     }, 500); // Matches the transition duration
+  }
+
+ async _handleSubmit(event) {
+    event.preventDefault();
+    const formData = new FormData(this.form);
+    const data = {};
+    formData.forEach((value, key) => {
+      data[key] = value;
+    });
+    console.log(data);
+
+    // run the fetch request here to send the data to the app proxy
+
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:2481209647.
+ const response = await fetch("https://checkout-extension-test-sj.myshopify.com/apps/order-finder", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+      console.log("Form submitted successfully");
+    } else {
+      console.error("Form submission failed");
+    }
+    console.log(response);
+    this._closeDrawer();
   }
 }
 
