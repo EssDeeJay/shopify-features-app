@@ -3,7 +3,7 @@
 client_id = "0c30902be418ed97b8d59668a3ba2e7a"
 name = "Red Ruby"
 handle = "red-ruby"
-application_url = "https://agent-restaurant-sort-downloadable.trycloudflare.com"
+application_url = "https://graphic-sudden-loves-useful.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_checkout_branding_settings,read_checkouts,read_discounts,read_ord
 
 [auth]
 redirect_urls = [
-  "https://agent-restaurant-sort-downloadable.trycloudflare.com/auth/callback",
-  "https://agent-restaurant-sort-downloadable.trycloudflare.com/auth/shopify/callback",
-  "https://agent-restaurant-sort-downloadable.trycloudflare.com/api/auth/callback"
+  "https://graphic-sudden-loves-useful.trycloudflare.com/auth/callback",
+  "https://graphic-sudden-loves-useful.trycloudflare.com/auth/shopify/callback",
+  "https://graphic-sudden-loves-useful.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
@@ -29,10 +29,10 @@ api_version = "2024-07"
   topics = [ "app/uninstalled" ]
   uri = "/webhooks"
 
-[pos]
-embedded = false
-
 [app_proxy]
-url = "https://agent-restaurant-sort-downloadable.trycloudflare.com/app/theme-app-extensions"
+url = "https://graphic-sudden-loves-useful.trycloudflare.com/app/theme-app-extensions"
 subpath = "order-finder"
 prefix = "apps"
+
+[pos]
+embedded = false

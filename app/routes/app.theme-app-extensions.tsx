@@ -1,10 +1,20 @@
 import { authenticate } from "~/shopify.server";
-import { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
-import { Page, Layout, BlockStack, Card, Text } from "@shopify/polaris";
+import { LoaderFunctionArgs, ActionFunctionArgs, json } from "@remix-run/node";
+import { Resend } from "resend";
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
-  await authenticate.admin(request);
-  return null;
+
+    try {
+        const { admin, session } = await authenticate.public.appProxy(request);
+        if (session) {
+          console.log('get route hit, return the below json data');
+          const response = json({ success: true, message: 'Hey, its working !!', shopName: session.shop });
+          return (response);
+        }
+      } catch (error) {
+        console.error("Error in loader:", error);
+      }
+      return json({ success: false }, { status: 404 });
 }
 
 export const action = async ({request}: ActionFunctionArgs) => {
@@ -12,28 +22,28 @@ export const action = async ({request}: ActionFunctionArgs) => {
 
     if(session){
         const { shop } = session;
+        const response = await request.json();
+        const resend = new Resend(process.env.RESEND_API_KEY);
         console.log('--------Hit App Proxy---------');
-        console.log(session);
-        console.log('shop name is', shop);
-        console.log('request data is', request.body);
-        return session;
+
+        const emailHtml = `<div>${JSON.stringify(response)}</div>`;
+        const { data, error } = await resend.emails.send({
+          from: 'Red Ruby <onboarding@resend.dev>',
+          to: ['hello@thesjdevelopment.com'],
+          subject: 'Quote Data from Red Ruby App',
+          html: emailHtml,
+        });
+
+        // here we can make a model to write the data to the mongodb as well and that way we can fetch it in another route and see
+        // how many inquiries have been submitted so far.
+        
+
+        if (error) {
+          return json({ error }, 400);
+        }
+        return json({success: true, submittedData: response, shopName: shop, dataSent: data});
     }
+    return json({success: false});
 
-    return null;
-}
 
-export default function ThemeAppExtensions(){
-    return(
-        <Page>
-            <Layout>
-                <Layout.Section>
-                    <Card>
-                        <BlockStack gap="300">
-                            <h1>Theme App Extensions</h1>
-                        </BlockStack>
-                    </Card>
-                </Layout.Section>
-            </Layout>
-        </Page>
-    )
 }

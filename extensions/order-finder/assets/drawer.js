@@ -132,33 +132,35 @@ class sideDrawer extends HTMLElement {
     }, 500); // Matches the transition duration
   }
 
- async _handleSubmit(event) {
+async _handleSubmit(event) {
     event.preventDefault();
     const formData = new FormData(this.form);
     const data = {};
     formData.forEach((value, key) => {
       data[key] = value;
     });
-    console.log(data);
 
-    // run the fetch request here to send the data to the app proxy
+// the fetch request to send the data to the app proxy
 
-// Suggested code may be subject to a license. Learn more: ~LicenseLog:2481209647.
- const response = await fetch("https://checkout-extension-test-sj.myshopify.com/apps/order-finder", {
-      method: "POST",
+ const response =  await fetch('/apps/order-finder', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
       },
+      redirect: 'manual',
       body: JSON.stringify(data),
+    }).then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('Network response was not ok');
+      }
+    }).catch(error => {
+      console.error(error);
     });
 
-    if (response.ok) {
-      console.log("Form submitted successfully");
-    } else {
-      console.error("Form submission failed");
-    }
-    console.log(response);
+    console.log(response , 'response from the app proxy');
     this._closeDrawer();
   }
 }
