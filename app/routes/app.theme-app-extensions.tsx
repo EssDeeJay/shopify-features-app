@@ -1,6 +1,5 @@
 import { authenticate } from "~/shopify.server";
 import { LoaderFunctionArgs, ActionFunctionArgs, json } from "@remix-run/node";
-import { Resend } from "resend";
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
 
@@ -23,27 +22,70 @@ export const action = async ({request}: ActionFunctionArgs) => {
     if(session){
         const { shop } = session;
         const response = await request.json();
-        const resend = new Resend(process.env.RESEND_API_KEY);
+        const slugify = (str: string) =>
+          str
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/[\s_-]+/g, '-')
+            .replace(/^-+|-+$/g, '');
         console.log('--------Hit App Proxy---------');
 
-        const emailHtml = `<div>${JSON.stringify(response)}</div>`;
-        const { data, error } = await resend.emails.send({
-          from: 'Red Ruby <onboarding@resend.dev>',
-          to: ['hello@thesjdevelopment.com'],
-          subject: 'Quote Data from Red Ruby App',
-          html: emailHtml,
-        });
-
-        // here we can make a model to write the data to the mongodb as well and that way we can fetch it in another route and see
-        // how many inquiries have been submitted so far.
+        const metafieldCreate = await admin.graphql(
+          `#graphql
+          mutation CreateMetaobject($metaobject: MetaobjectCreateInput!) {
+            metaobjectCreate(metaobject: $metaobject) {
+              metaobject {
+                handle
+                name: field(key: "name") {
+                  value
+                }
+                email: field(key: "email") {
+                  value
+                }
+                message: field(key: "message") {
+                  value
+                }
+              }
+              userErrors {
+                field
+                message
+                code
+              }
+            }
+          }`,
+          {
+            variables: {
+              "metaobject": {
+                "type": "request_quote",
+                "handle": `${slugify(response.name)}`,
+                "fields": [
+                  {
+                    "key": "name",
+                    "value": `${response.name}`
+                  },
+                  {
+                    "key": "email",
+                    "value": `${response.email}`
+                  },
+                  {
+                    "key": "message",
+                    "value": `${response.message}`
+                  }
+                ]
+              }
+            },
+          },
+        );
         
-
-        if (error) {
-          return json({ error }, 400);
+        const metafieldResponse = await metafieldCreate.json();
+        
+        if(metafieldResponse.data.metaobjectCreate.userErrors.length){
+          return json({success: false, errors: metafieldResponse.data.metaobjectCreate.userErrors});
         }
-        return json({success: true, submittedData: response, shopName: shop, dataSent: data});
+      
+        return json({success: true, submittedData: response, shopName: shop, metafieldResponse: metafieldResponse});
     }
-    return json({success: false});
 
-
+    return json({success: false, errorMessage: 'Session not found, request is not coming from valid shopify shop'});
 }

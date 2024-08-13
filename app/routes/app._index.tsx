@@ -103,11 +103,12 @@ export default function Index() {
     "",
   );
 
-  useEffect(() => {
+ useEffect(() => {
     if (productId) {
       shopify.toast.show("Product created");
     }
   }, [productId, shopify]);
+  
   const generateProduct = () => fetcher.submit({}, { method: "POST" });
 
   return (

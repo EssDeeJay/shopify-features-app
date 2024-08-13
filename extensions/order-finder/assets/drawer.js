@@ -4,6 +4,7 @@ class sideDrawer extends HTMLElement {
         this.attachShadow({mode: 'open'});
         this.form = this.querySelector('#drawerForm');
         this.form.addEventListener('submit', this._handleSubmit.bind(this));
+        this.responseMessageContainer = this.querySelector('#responseMessage');
 
         this.shadowRoot.innerHTML = `
         <style>
@@ -152,6 +153,7 @@ async _handleSubmit(event) {
       body: JSON.stringify(data),
     }).then(response => {
       if (response.ok) {
+        this.responseMessageContainer.innerHTML = '<p>Thanks for contacting us! We will get back to you soon.</p>'
         return response.json();
       } else {
         throw new Error('Network response was not ok');
@@ -161,7 +163,14 @@ async _handleSubmit(event) {
     });
 
     console.log(response , 'response from the app proxy');
-    this._closeDrawer();
+   
+    
+
+    setTimeout(() => {
+      this.responseMessageContainer.innerHTML = '';
+      this.form.reset();
+      this._closeDrawer();
+    }, 3000); // 3 seconds
   }
 }
 

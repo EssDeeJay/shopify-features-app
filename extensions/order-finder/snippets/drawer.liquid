@@ -1,20 +1,14 @@
 <side-drawer id="app-drawer">
    <div slot="content">
       <header class="drawer__header">
-         <h2 class="drawer__title">Order Finder</h2>
+         <h2 class="drawer__title">Request a Quote</h2>
          <button id="closeDrawer" aria-label="Close Drawer">&times;</button>
       </header>
     
       <div class="drawer__content">
          <form class="drawer__form" id="drawerForm" method="post">
             <p>
-              This is my app drawer and it triggers whenever someone clicks on the where is my order button.
-            </p>
-            <p>
-              What is does is, it will look if customer is logged in, if yes, it will show them there number of orders and 
-              customer can click to see the status of any of their open orders.
-    
-              Basically idea is to fetch this information, from the purolator tracking site and display it which reduces the calls to customer service.
+               Please fill out the form below if you have any questions for one of the products we have listed on our website and would like to get a quote about it.
             </p>
             <label for="name">Name</label>
             <input type="text" id="name" name="name" placeholder="Name" required>
@@ -22,11 +16,11 @@
             <input type="email" id="email" name="email" placeholder="Email" required>
             <label for="message">Message</label>
             <textarea id="message" name="message" placeholder="Message"></textarea>
-            <button type="submit">Submit</button>
+            <button type="submit" class="submit-btn">Submit</button>
          </form>
-         
+         <div id="responseMessage"></div>
       </div>
-
+   
      
    </div>     
 </side-drawer>

@@ -3,7 +3,7 @@
 client_id = "0c30902be418ed97b8d59668a3ba2e7a"
 name = "Red Ruby"
 handle = "red-ruby"
-application_url = "https://graphic-sudden-loves-useful.trycloudflare.com"
+application_url = "https://wires-dimension-tab-impressive.trycloudflare.com"
 embedded = true
 
 [build]
@@ -13,13 +13,13 @@ include_config_on_deploy = true
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_checkout_branding_settings,read_checkouts,read_discounts,read_orders,read_products,read_themes,write_checkout_branding_settings,write_checkouts,write_discounts,write_orders,write_products,write_themes"
+scopes = "read_checkout_branding_settings,read_checkouts,read_discounts,read_metaobject_definitions,read_metaobjects,read_orders,read_products,read_themes,write_checkout_branding_settings,write_checkouts,write_discounts,write_metaobject_definitions,write_metaobjects,write_orders,write_products,write_themes"
 
 [auth]
 redirect_urls = [
-  "https://graphic-sudden-loves-useful.trycloudflare.com/auth/callback",
-  "https://graphic-sudden-loves-useful.trycloudflare.com/auth/shopify/callback",
-  "https://graphic-sudden-loves-useful.trycloudflare.com/api/auth/callback"
+  "https://wires-dimension-tab-impressive.trycloudflare.com/auth/callback",
+  "https://wires-dimension-tab-impressive.trycloudflare.com/auth/shopify/callback",
+  "https://wires-dimension-tab-impressive.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
@@ -30,7 +30,7 @@ api_version = "2024-07"
   uri = "/webhooks"
 
 [app_proxy]
-url = "https://graphic-sudden-loves-useful.trycloudflare.com/app/theme-app-extensions"
+url = "https://wires-dimension-tab-impressive.trycloudflare.com/app/theme-app-extensions"
 subpath = "order-finder"
 prefix = "apps"
 

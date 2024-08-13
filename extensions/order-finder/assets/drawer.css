@@ -1,3 +1,7 @@
+side-drawer *:focus {
+    outline: none;
+}
+
 #openDrawer{
     position: fixed;
     bottom: 10px;
@@ -118,16 +122,35 @@
 }
 
 .drawer__form input, .drawer__form textarea{
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 0.25rem;
-    width: 100%;
+    padding: 1rem;
+    background-color: white;
+    box-shadow: none;
+    border: 1px solid #000;
 }
 .drawer__form textarea{
     height: 10rem;
 }
 .drawer__form:focus{
     outline: none;
+}
+
+.drawer__content #responseMessage{
+    color: #046a38;
+    font-size: 16px;
+    margin-top: 10px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.drawer__content .submit-btn{
+    padding: 1rem;
+    background-color: #82bc00;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
 }
 
 /* Media query for smaller screens */
