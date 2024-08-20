@@ -3,6 +3,7 @@ import { LoaderFunctionArgs, ActionFunctionArgs, json, redirect } from "@remix-r
 import { Page, Layout, Card, BlockStack, Button, TextField } from "@shopify/polaris";
 import { Form, useActionData, useNavigation } from "@remix-run/react";
 import { useState, useCallback, useEffect } from "react";
+import { slugify } from "~/utils/utils";
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
      await authenticate.admin(request);
@@ -13,8 +14,64 @@ export const action = async ({request}: ActionFunctionArgs) => {
     const { session, admin } = await authenticate.admin(request);
     if(session){
         const response = await request.formData();
-        console.log(response);
-        return json({success: true, submittedData: response, errorMessage: null});
+        const name = response.get('name') as string;
+        const email = response.get('email');
+        const message = response.get('message');
+
+        const mutationResponse = await admin.graphql(`
+           #graphql
+           mutation CreateMetaobject($metaobject: MetaobjectCreateInput!) {
+            metaobjectCreate(metaobject: $metaobject) {
+              metaobject {
+                handle
+                name: field(key: "name") {
+                  value
+                }
+                email: field(key: "email") {
+                  value
+                }
+                message: field(key: "message") {
+                  value
+                }
+              }
+              userErrors {
+                field
+                message
+                code
+              }
+            }
+          }
+        `,
+        {
+          variables: {
+            "metaobject": {
+              "type": "request_quote",
+              "handle": `${slugify(name)}`,
+              "fields": [
+                {
+                  "key": "name",
+                  "value": name
+                },
+                {
+                  "key": "email",
+                  "value": email
+                },
+                {
+                  "key": "message",
+                  "value": message
+                }
+              ]
+            }
+          }   
+        }
+      );
+
+      const metaobjectResponse = await mutationResponse.json();
+
+      if(metaobjectResponse.data.metaobjectCreate.userErrors.length){
+        return json({success: false, errors: metaobjectResponse.data.metaobjectCreate.userErrors, errorMessage: 'Error in creating metaobject', submittedData: null});
+      }
+        return json({success: true, submittedData: metaobjectResponse, errorMessage: null});
     }
 
     return json({success: false, errorMessage: 'Session not found, request is not coming from valid shopify shop', submittedData: null });

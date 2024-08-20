@@ -1,5 +1,6 @@
 import { authenticate } from "~/shopify.server";
 import { LoaderFunctionArgs, ActionFunctionArgs, json } from "@remix-run/node";
+import { slugify } from "~/utils/utils";
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
 
@@ -22,13 +23,6 @@ export const action = async ({request}: ActionFunctionArgs) => {
     if(session){
         const { shop } = session;
         const response = await request.json();
-        const slugify = (str: string) =>
-          str
-            .toLowerCase()
-            .trim()
-            .replace(/[^\w\s-]/g, '')
-            .replace(/[\s_-]+/g, '-')
-            .replace(/^-+|-+$/g, '');
         console.log('--------Hit App Proxy---------');
 
         const metafieldCreate = await admin.graphql(
