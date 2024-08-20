@@ -1,5 +1,5 @@
 import { authenticate } from "~/shopify.server";
-import { LoaderFunctionArgs } from "@remix-run/node";
+import { LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { Page, Layout, Card, BlockStack, DataTable, Link, Button } from "@shopify/polaris";
 import { useLoaderData } from "@remix-run/react";
 
@@ -54,10 +54,9 @@ export default function QuoteRequests(){
            quote.node.message.value
         ];
     });
-  
 
     return(
-        <Page title="Quote Requests" subtitle="Quote requests from the shopify storefront" primaryAction={<Button variant="primary">Create New Quote</Button>}>
+        <Page title="Quote Requests" subtitle="Quote requests from the shopify storefront" primaryAction={<Button variant="primary" url="/app/quote-requests/new">Create New Quote</Button>}>
           <Layout>
              <Layout.Section>
                  <Card>
