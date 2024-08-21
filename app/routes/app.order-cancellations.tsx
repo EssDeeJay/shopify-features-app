@@ -7,14 +7,14 @@ export const loader = async ({request}: LoaderFunctionArgs) => {
   return null;
 }
 
-export default function CheckoutExtensions(){
+export default function OrderCancellations(){
     return(
         <Page>
             <Layout>
                 <Layout.Section>
                     <Card>
                         <BlockStack gap="300">
-                            <h1>Checkout Extensions</h1>
+                            <h1>Order cancellations</h1>
                         </BlockStack>
                     </Card>
                 </Layout.Section>

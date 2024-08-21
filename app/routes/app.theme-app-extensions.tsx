@@ -8,7 +8,7 @@ export const loader = async ({request}: LoaderFunctionArgs) => {
         const { admin, session } = await authenticate.public.appProxy(request);
         if (session) {
           console.log('get route hit, return the below json data');
-          const response = json({ success: true, message: 'Hey, its working !!', shopName: session.shop });
+          const response = json({ success: true, message: 'Nothing here mate, nice try !!', shopName: session.shop });
           return (response);
         }
       } catch (error) {

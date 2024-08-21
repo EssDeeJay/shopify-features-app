@@ -228,6 +228,7 @@ export default function Index() {
                       <Text as="span" variant="bodyMd">
                         Database
                       </Text>
+                      <span>
                       <Link
                         url="https://www.prisma.io/"
                         target="_blank"
@@ -235,6 +236,16 @@ export default function Index() {
                       >
                         Prisma
                       </Link>
+                      {", "}
+                      <Link
+                        url="https://www.mongodb.com/"
+                        target="_blank"
+                        removeUnderline
+                      >
+                        MongoDB
+                      </Link>
+                      </span>
+                      
                     </InlineStack>
                     <InlineStack align="space-between">
                       <Text as="span" variant="bodyMd">
@@ -267,7 +278,7 @@ export default function Index() {
                         target="_blank"
                         removeUnderline
                       >
-                        GraphQL API
+                        GraphQL Admin
                       </Link>
                     </InlineStack>
                     <InlineStack align="space-between">
@@ -297,7 +308,10 @@ export default function Index() {
                       Remove Product tags by selecting the product
                     </List.Item>
                     <List.Item>
-                       ** Next ** - Instantly Updated UI 
+                      Theme app extension with metaobject creation
+                    </List.Item>
+                    <List.Item>
+                      Admin UI for theme app extension and creating record from admin
                     </List.Item>
                   </List>
                 </BlockStack>

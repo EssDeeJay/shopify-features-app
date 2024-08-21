@@ -3,7 +3,7 @@
 client_id = "0c30902be418ed97b8d59668a3ba2e7a"
 name = "Red Ruby"
 handle = "red-ruby"
-application_url = "https://syntax-incorporated-executed-accept.trycloudflare.com"
+application_url = "https://reflected-stocks-flowers-timer.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_checkout_branding_settings,read_checkouts,read_discounts,read_met
 
 [auth]
 redirect_urls = [
-  "https://syntax-incorporated-executed-accept.trycloudflare.com/auth/callback",
-  "https://syntax-incorporated-executed-accept.trycloudflare.com/auth/shopify/callback",
-  "https://syntax-incorporated-executed-accept.trycloudflare.com/api/auth/callback"
+  "https://reflected-stocks-flowers-timer.trycloudflare.com/auth/callback",
+  "https://reflected-stocks-flowers-timer.trycloudflare.com/auth/shopify/callback",
+  "https://reflected-stocks-flowers-timer.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
@@ -30,7 +30,7 @@ api_version = "2024-07"
   uri = "/webhooks"
 
 [app_proxy]
-url = "https://syntax-incorporated-executed-accept.trycloudflare.com/app/theme-app-extensions"
+url = "https://reflected-stocks-flowers-timer.trycloudflare.com/app/theme-app-extensions"
 subpath = "order-finder"
 prefix = "apps"
 
