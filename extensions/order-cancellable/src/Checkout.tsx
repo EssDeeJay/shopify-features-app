@@ -1,14 +1,11 @@
 import {
   reactExtension,
-  Banner,
   BlockStack,
-  Checkbox,
-  Text,
   useApi,
   useTranslate,
   Button,
-  useStorage,
-  useOrder
+  useOrder,
+  Text
 } from "@shopify/ui-extensions-react/checkout";
 import { useState, useEffect, useCallback } from "react";
 
@@ -25,15 +22,10 @@ function ThankYouBlock() {
   const { extension } = useApi();
   const [attribution, setAttribution] = useState('');
   const [loading, setLoading] = useState(false);
-  const [orderSubmitted, setOrderSubmitted] = useStorageState('order-submitted');
 
 
   async function handleSubmit(){
     console.log('cancel order button clicked');
-  }
-
-  if(orderSubmitted.loading || orderSubmitted.data === true){
-    return null;
   }
 
   return (
@@ -47,69 +39,59 @@ function ThankYouBlock() {
 
 function OrderStatusBlock(){
   const translate = useTranslate();
-  const { extension } = useApi();
+  const { extension, sessionToken } = useApi();
   const order = useOrder();
-
   const [loading, setLoading] = useState(false);
-  const [orderSubmitted, setOrderSubmitted] = useStorageState('order-submitted');
+  const [orderCancelled, setOrderCancelled] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
-
+  useEffect(() => {
+    if (orderCancelled) {
+      location.reload();
+    }
+  }, [orderCancelled]);
+  
   async function handleSubmit(){
-    console.log('cancel order button clicked');
+    setLoading(true);
     //simulate the server request here
-    const response = await fetch('https://reflected-stocks-flowers-timer.trycloudflare.com/app/api/order-cancel', {
-      method: 'GET',
+    const token = await sessionToken.get();
+    const response = await fetch('https://bent-gratuit-jvc-compliant.trycloudflare.com/app/api/order-cancel', {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        "Access-Control-Allow-Origin": "*"
+        "Access-Control-Allow-Origin": "*",
+        "Authorization": `Bearer ${token}`
       },
+      body: JSON.stringify({orderId: order.id})
     });
     const apiResponse = await response.json();
-    console.log(apiResponse);
-    setLoading(true);
+ 
     return new Promise((resolve) => {
       setTimeout(() => {
-        // send the order to the server for cancellation with the refund and restock
-        console.log('Order Submitted:', order.id);
+        console.log(apiResponse.success)
         setLoading(false)
-        setOrderSubmitted(true);
         resolve(true);
+        if(apiResponse.success){
+          setOrderCancelled(true);
+          setSuccessMessage('Order cancelled successfully'); 
+        }
       }, 2000);
     });
 
   }
 
-  if(orderSubmitted.loading || orderSubmitted.data === true || !order){
+  if(!order || order.cancelledAt !== undefined){
     return null;
   }
 
   return (
     <BlockStack>
+      {orderCancelled ? <Text appearance="success" size="medium">{successMessage}</Text> : (
       <Button appearance="critical" onPress={handleSubmit} loading={loading}>
          {translate("cancelButton")}
       </Button>
+      )}
+      
     </BlockStack>
   );
-}
-
-function useStorageState(key) {
-  const storage = useStorage();
-  const [data, setData] = useState<string | unknown>();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function queryStorage() {
-      const value = await storage.read(key)
-      setData(value);
-      setLoading(false)
-    }
-
-    queryStorage();
-  }, [setData, setLoading, storage, key])
-
-  const setStorage = useCallback((value) => {
-    storage.write(key, value)
-  }, [storage, key])
-
-  return [{data, loading}, setStorage] as [{data: string | unknown, loading: boolean}, (value: boolean) => void]
 }
