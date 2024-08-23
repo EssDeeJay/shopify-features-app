@@ -5,7 +5,7 @@ import {
   useTranslate,
   Button,
   useOrder,
-  Text
+  Banner
 } from "@shopify/ui-extensions-react/checkout";
 import { useState, useEffect, useCallback } from "react";
 
@@ -39,23 +39,45 @@ function ThankYouBlock() {
 
 function OrderStatusBlock(){
   const translate = useTranslate();
-  const { extension, sessionToken } = useApi();
+  const { extension, sessionToken, query } = useApi();
   const order = useOrder();
   const [loading, setLoading] = useState(false);
   const [orderCancelled, setOrderCancelled] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [orderData, setOrderData] =useState<any>();
 
-  useEffect(() => {
-    if (orderCancelled) {
-      location.reload();
-    }
-  }, [orderCancelled]);
+  useEffect (() => {
+    query(
+      `query {
+        order(id: "${order.id}"){
+          name
+          tags
+        }
+      }`
+     ).then(({data, errors}) => {
+      console.log(order.id)
+      setOrderData(data);
+     }).catch(error => {
+      console.error(error);
+     });
+  }, [order]);
+
+ 
+
+  const isLessthanAnHourAgo = () => {
+    if(!order || !order.processedAt ) return false;
+    const processedAtDate = new Date(order.processedAt);
+    const currentDate = new Date();
+    const timeDifference = currentDate.getTime() - processedAtDate.getTime();
+    const hoursDifference = timeDifference / (1000 * 60 * 60);
+    return hoursDifference < 1;
+  }
   
   async function handleSubmit(){
     setLoading(true);
     //simulate the server request here
     const token = await sessionToken.get();
-    const response = await fetch('https://bent-gratuit-jvc-compliant.trycloudflare.com/app/api/order-cancel', {
+    const response = await fetch('https://greece-decent-voltage-speak.trycloudflare.com/app/api/order-cancel', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -68,25 +90,24 @@ function OrderStatusBlock(){
  
     return new Promise((resolve) => {
       setTimeout(() => {
-        console.log(apiResponse.success)
         setLoading(false)
         resolve(true);
         if(apiResponse.success){
           setOrderCancelled(true);
-          setSuccessMessage('Order cancelled successfully'); 
+          setSuccessMessage('Order cancelled successfully, you can go back or refresh the page to see the updated status of your order. You will get refunded within 1-2 business days.'); 
         }
       }, 2000);
     });
 
   }
 
-  if(!order || order.cancelledAt !== undefined){
+  if(!order || order.cancelledAt !== undefined || !isLessthanAnHourAgo()){
     return null;
   }
 
   return (
     <BlockStack>
-      {orderCancelled ? <Text appearance="success" size="medium">{successMessage}</Text> : (
+      {orderCancelled ? <Banner status="success" title={successMessage} /> : (
       <Button appearance="critical" onPress={handleSubmit} loading={loading}>
          {translate("cancelButton")}
       </Button>

@@ -1,7 +1,6 @@
 import { authenticate, unauthenticated } from "~/shopify.server";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { headers } from "./app";
 
 export const loader = async({request}: LoaderFunctionArgs) => {
 
