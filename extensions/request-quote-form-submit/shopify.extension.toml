@@ -1,0 +1,19 @@
+[[extensions]]
+name = "request-quote-form-submit"
+handle = "request-quote-form-submit"
+type = "flow_trigger"
+description = "Extension for triggering the shopify email with request a quote submission on frontend."
+
+[settings]
+
+  [[settings.fields]]
+  type = "single_line_text_field"
+  key = "name"
+
+  [[settings.fields]]
+  type = "email"
+  key = "email"
+
+  [[settings.fields]]
+  type = "single_line_text_field"
+  key = "message"

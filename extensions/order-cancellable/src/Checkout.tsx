@@ -50,12 +50,12 @@ function OrderStatusBlock(){
     query(
       `query {
         order(id: "${order.id}"){
+          id
           name
           tags
         }
       }`
      ).then(({data, errors}) => {
-      console.log(order.id)
       setOrderData(data);
      }).catch(error => {
       console.error(error);
@@ -77,7 +77,7 @@ function OrderStatusBlock(){
     setLoading(true);
     //simulate the server request here
     const token = await sessionToken.get();
-    const response = await fetch('https://greece-decent-voltage-speak.trycloudflare.com/app/api/order-cancel', {
+    const response = await fetch('https://firewall-loose-interior-brazilian.trycloudflare.com/app/api/order-cancel', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

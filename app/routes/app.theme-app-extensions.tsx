@@ -71,14 +71,39 @@ export const action = async ({request}: ActionFunctionArgs) => {
             },
           },
         );
+
+      const flowTriggerMutation = await admin.graphql(`
+          #graphql
+          mutation flowTriggerReceive($handle: String, $payload: JSON) {
+            flowTriggerReceive(handle: $handle, payload: $payload) {
+              userErrors {
+                field
+                message
+              }
+            }
+          }
+        `,
+        {
+          variables: {
+            "handle": "request-quote-form-submit",
+            "payload": {
+              "name": `${response.name}`,
+              "email": `${response.email}`,
+              "message": `${response.message}`
+            }
+          }
+        }
+      );
         
         const metafieldResponse = await metafieldCreate.json();
+
+        const flowResponse = await flowTriggerMutation.json();
         
-        if(metafieldResponse.data.metaobjectCreate.userErrors.length){
+        if(metafieldResponse.data.metaobjectCreate.userErrors.length && flowResponse.data.flowTriggerReceive.userErrors.length){
           return json({success: false, errors: metafieldResponse.data.metaobjectCreate.userErrors});
         }
       
-        return json({success: true, submittedData: response, shopName: shop, metafieldResponse: metafieldResponse});
+        return json({success: true, submittedData: response, shopName: shop, metafieldResponse: metafieldResponse, flowSuccess: true});
     }
 
     return json({success: false, errorMessage: 'Session not found, request is not coming from valid shopify shop'});
