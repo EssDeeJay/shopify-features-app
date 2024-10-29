@@ -27,7 +27,7 @@ export default function App() {
         </Link>
         <Link to="/app/product-operations">Product Operations</Link>
         <Link to="/app/order-operations">Order Operations</Link>
-        <Link to="/app/custom-discounts">Custom Discounts</Link>
+        <Link to="/app/create-form">Create Form</Link>
         <Link to="/app/order-cancellations">Order Cancellations</Link>
         <Link to="/app/quote-requests">Quote Requests</Link>
         <Link to="/app/settings">Settings</Link>
