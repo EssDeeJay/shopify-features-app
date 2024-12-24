@@ -1,14 +1,53 @@
 import React, { useCallback, useState } from "react";
-import { ActionFunctionArgs } from "@remix-run/node";
-import { Page, Layout, Text, Card, Popover, Button } from "@shopify/polaris";
-import CustomResourceList from "~/components/CustomResourceList";
+import { ActionFunctionArgs, redirect } from "@remix-run/node";
+import { Page, Layout, Text, Card, Popover, Button, ResourceListProps } from "@shopify/polaris";
+import CustomResourceList, { itemsResource } from "~/components/CustomResourceList";
+import { authenticate } from "~/shopify.server";
+import { productsQuery } from "~/graphql/bulkQuery";
 
-export const action = ({request}: ActionFunctionArgs) => {
+export const action = async ({request}: ActionFunctionArgs) => {
+    const { admin } = await authenticate.admin(request);
+
+    const formData = await request.formData();
+
+    const response = await admin.graphql(`
+    #graphQl
+      mutation{
+        bulkOperationRunQuery(
+            query: """
+              ${productsQuery}
+            """
+        ){
+            bulkOperation{
+                id
+                status
+                query
+                url
+                rootObjectCount
+                type
+                createdAt
+                fileSize
+                partialDataUrl
+                objectCount
+            }
+            userError{
+                field
+                message
+            }
+        }
+      }
+    `);
+
+    if(response.ok){
+        const data = await response.json();
+        console.log('data', data);
+    }
     return null;
 }
 
 export default function ExportForm(){
     const [activate, setActivate] = useState(false);
+    const [selectedItems, setSelectedItems] = useState<ResourceListProps["selectedItems"]>([]);
 
     const toggleActive = useCallback(() => {
         setActivate(prev => !prev);
@@ -36,7 +75,7 @@ export default function ExportForm(){
                 <Card>
                     <div style={{ position: "relative" }}>
                         <Popover active={activate} activator={activator} onClose={toggleActive} fullWidth autofocusTarget="first-node">
-                            <CustomResourceList />
+                            <CustomResourceList items={itemsResource} selectedItems={selectedItems} setSelectedItems={setSelectedItems} />
                         </Popover>
                     </div>
                 </Card>
