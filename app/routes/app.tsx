@@ -26,7 +26,7 @@ export default function App() {
           Home
         </Link>
         <Link to="/app/product-operations">Product Operations</Link>
-        <Link to="/app/order-operations">Order Operations</Link>
+        <Link to="/app/bulk-operations">Bulk Operations</Link>
         <Link to="/app/create-form">Create Form</Link>
         <Link to="/app/order-cancellations">Order Cancellations</Link>
         <Link to="/app/quote-requests">Quote Requests</Link>
